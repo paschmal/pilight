@@ -38,7 +38,7 @@
 #include <ctype.h>
 #include <dirent.h>
 #ifndef _WIN32
-#include <wiringx.h>
+#include <wiringPi.h>
 #endif
 #include <assert.h>
 
@@ -2413,7 +2413,7 @@ int main_gc(void) {
 	whitelist_free();
 	threads_gc();
 #ifndef _WIN32
-	wiringXGC();
+	//wiringXGC();
 #endif
 	dso_gc();
 	log_gc();
@@ -2747,15 +2747,16 @@ int start_pilight(int argc, char **argv) {
 		printf("%s", help);
 #if defined(__arm__) || defined(__mips__) || defined(__aarch64__)
 		printf("\n\tThe following GPIO platforms are supported:\n");
-		char **out = NULL;
-		int z = 0, i = wiringXSupportedPlatforms(&out);
+		// char **out = NULL;
+		// int z = 0, i = wiringXSupportedPlatforms(&out);
 
-		printf("\t- none\n");
-		for(z=0;z<i;z++) {
-			printf("\t- %s\n", out[z]);
-			free(out[z]);
-		}
-		free(out);
+		// printf("\t- none\n");
+		// for(z=0;z<i;z++) {
+		// 	printf("\t- %s\n", out[z]);
+		// 	free(out[z]);
+		// }
+		// free(out);
+		printf("BananaPro with");
 		printf("\n");
 #endif
 #endif

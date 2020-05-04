@@ -220,8 +220,8 @@ if(NOT WIN32)
 		# endif()
 	# endif()
 
-	find_library(CMAKE_WIRINGX_LIBS_INIT
-		NAME wiringx
+	find_library(CMAKE_WIRINGPI_LIBS_INIT
+		NAME wiringPi
 		PATHS
 			${CROSS_COMPILE_LIBS}
 			/usr/lib
@@ -237,10 +237,10 @@ if(NOT WIN32)
 			/usr/lib/aarch64-linux-gnu
 		NO_DEFAULT_PATH)
 
-	if(${CMAKE_WIRINGX_LIBS_INIT} MATCHES "CMAKE_WIRINGX_LIBS_INIT-NOTFOUND")
-		message(FATAL_ERROR "Looking for libwiringx - not found")
+	if(${CMAKE_WIRINGPI_LIBS_INIT} MATCHES "CMAKE_WIRINGPI_LIBS_INIT-NOTFOUND")
+		message(FATAL_ERROR "Looking for libwiringPi - not found")
 	else()
-		message(STATUS "Looking for libwiringx - found (${CMAKE_WIRINGX_LIBS_INIT})")
+		message(STATUS "Looking for libwiringPi - found (${CMAKE_WIRINGPI_LIBS_INIT})")
 	endif()
 endif()
 
@@ -428,7 +428,7 @@ if(${MODULESPACK} MATCHES "OFF" OR WIN32)
 		target_link_libraries(${PROJECT_NAME}_shared rt)
 	endif()
 	target_link_libraries(${PROJECT_NAME}_shared ${CMAKE_DL_LIBS})
-	target_link_libraries(${PROJECT_NAME}_shared ${CMAKE_WIRINGX_LIBS_INIT})
+	target_link_libraries(${PROJECT_NAME}_shared ${CMAKE_WIRINGPI_LIBS_INIT})
 	target_link_libraries(${PROJECT_NAME}_shared ${CMAKE_MBEDTLS_LIBS_INIT})
 	target_link_libraries(${PROJECT_NAME}_shared ${CMAKE_MBEDCRYPTO_LIBS_INIT})
 	target_link_libraries(${PROJECT_NAME}_shared ${CMAKE_MBEDX509_LIBS_INIT})
@@ -443,7 +443,7 @@ if(${MODULESPACK} MATCHES "OFF" OR WIN32)
 		target_link_libraries(${PROJECT_NAME}_static rt)
 	endif()
 	target_link_libraries(${PROJECT_NAME}_static ${CMAKE_DL_LIBS})
-	target_link_libraries(${PROJECT_NAME}_static ${CMAKE_WIRINGX_LIBS_INIT})
+	target_link_libraries(${PROJECT_NAME}_static ${CMAKE_WIRINGPI_LIBS_INIT})
 	target_link_libraries(${PROJECT_NAME}_static ${CMAKE_MBEDTLS_LIBS_INIT})
 	target_link_libraries(${PROJECT_NAME}_static ${CMAKE_MBEDCRYPTO_LIBS_INIT})
 	target_link_libraries(${PROJECT_NAME}_static ${CMAKE_MBEDX509_LIBS_INIT})

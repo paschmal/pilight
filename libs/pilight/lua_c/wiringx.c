@@ -17,7 +17,7 @@
 #include <limits.h>
 #include <assert.h>
 
-#include <wiringx.h>
+#include <wiringPi.h>
 
 #ifndef _WIN32
 	#include <unistd.h>
@@ -267,11 +267,11 @@ int plua_wiringx_digital_write(struct lua_State *L) {
 		pluaL_error(L, "wiringX digitalWrite mode should be HIGH or LOW", lua_gettop(L));
 	}
 
-	if(wiringXPlatform() == NULL) {
-		lua_pushnumber(L, 0);
-	} else if(wiringXValidGPIO(gpio) == -1) {
-		lua_pushnumber(L, 0);
-	} else {
+	// if(wiringXPlatform() == NULL) {
+	// 	lua_pushnumber(L, 0);
+	// } else if(wiringXValidGPIO(gpio) == -1) {
+	// 	lua_pushnumber(L, 0);
+	// } else {
 		if(table != NULL) {
 			int i = 0, error = 0;
 			uv_mutex_lock(&table->lock);
@@ -281,10 +281,7 @@ int plua_wiringx_digital_write(struct lua_State *L) {
 				}
 			}
 			for(i=0;i<table->nrvar;i++) {
-				if(digitalWrite(gpio, mode) == -1) {
-					error = 1;
-					break;
-				}
+				digitalWrite(gpio, mode);
 				if(i < table->nrvar) {
 					usleep((int)table->table[i].val.number_);
 				}
@@ -297,13 +294,10 @@ int plua_wiringx_digital_write(struct lua_State *L) {
 			}
 			uv_mutex_unlock(&table->lock);
 		} else {
-			if(digitalWrite(gpio, mode) == -1) {
-				lua_pushnumber(L, 0);
-			} else {
-				lua_pushnumber(L, 1);
-			}
+			digitalWrite(gpio, mode);
+			lua_pushnumber(L, 1);
 		}
-	}
+	//}
 
 	if(is_table == 1) {
 		plua_metatable_free(table);
@@ -333,13 +327,13 @@ int plua_wiringx_has_gpio(struct lua_State *L) {
 		lua_pop(L, 1);
 	}
 
-	if(wiringXPlatform() == NULL) {
-		lua_pushboolean(L, 0);
-	} else if(wiringXValidGPIO(gpio) == 0) {
+	// if(wiringXPlatform() == NULL) {
+	// 	lua_pushboolean(L, 0);
+	// } else if(wiringXValidGPIO(gpio) == 0) {
+	// 	lua_pushboolean(L, 1);
+	// } else {
 		lua_pushboolean(L, 1);
-	} else {
-		lua_pushboolean(L, 0);
-	}
+	// }
 
 	assert(plua_check_stack(L, 1, PLUA_TBOOLEAN) == 0);
 
@@ -400,15 +394,14 @@ int plua_wiringx_pin_mode(struct lua_State *L) {
 	tmp->mode = mode;
 	tmp->parent = wiringx;
 
-	if(wiringXPlatform() == NULL) {
-		lua_pushboolean(L, 0);
-	} else if(wiringXValidGPIO(gpio) == -1) {
-		lua_pushboolean(L, 0);
-	} else if(pinMode(gpio, mode) == -1) {
-		lua_pushboolean(L, 0);
-	} else {
+	// if(wiringXPlatform() == NULL) {
+	// 	lua_pushboolean(L, 0);
+	// } else if(wiringXValidGPIO(gpio) == -1) {
+	// 	lua_pushboolean(L, 0);
+	// } else {
+		pinMode(gpio, mode);
 		lua_pushboolean(L, 1);
-	}
+	// }
 
 	assert(plua_check_stack(L, 1, PLUA_TBOOLEAN) == 0);
 
@@ -624,14 +617,15 @@ static int plua_wiringx_isr(struct lua_State *L) {
 		if(gpio >= 0) {
 			struct lua_wiringx_gpio_t *tmp = plua_wiringx_get_gpio_struct(wiringx, gpio);
 
-			if(wiringXISR(gpio, mode) < 0) {
-				/*
-				 * FIXME
-				 */
-				// log
-			}
+			// if(wiringXISR(gpio, mode) < 0) {
+			// 	/*
+			// 	 * FIXME
+			// 	 */
+			// 	// log
+			// }
 
-			int fd = wiringXSelectableFd(gpio);
+			// int fd = wiringXSelectableFd(gpio);
+			int fd = 0;
 
 			if(tmp->timer_req != NULL) {
 				uv_timer_stop(tmp->timer_req);
@@ -754,7 +748,7 @@ int plua_wiringx_setup(struct lua_State *L) {
 	}
 
 	if(match == 0) {
-		if(wiringXSetup((char *)platform, logprintf1) == 0) {
+		if(wiringPiSetup() == 0) {
 			if((wiringx = REALLOC(wiringx, sizeof(struct lua_wiringx_t *)*(nrinits+1))) == NULL) {
 				OUT_OF_MEMORY
 			}

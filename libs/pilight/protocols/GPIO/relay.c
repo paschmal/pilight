@@ -24,7 +24,7 @@
 #include <math.h>
 #include <assert.h>
 #ifndef _WIN32
-#include <wiringx.h>
+#include <wiringPi.h>
 #endif
 
 #include "../../core/pilight.h"
@@ -102,7 +102,7 @@ static int createCode(JsonNode *code) {
 		have_error = 1;
 		goto clear;
 	}
-	if(wiringXSetup(platform, logprintf1) < 0) {
+	if(wiringPiSetup() < 0) {
 		FREE(platform);
 		have_error = 1;
 		goto clear;
@@ -115,7 +115,7 @@ static int createCode(JsonNode *code) {
 		goto clear;
 	} else {
 		if(strstr(progname, "daemon") != NULL) {
-			pinMode(gpio, PINMODE_OUTPUT);
+			pinMode(gpio, OUTPUT);
 			if(strcmp(def, "off") == 0) {
 				if(state == 1) {
 					digitalWrite(gpio, LOW);
@@ -200,7 +200,7 @@ static int checkValues(JsonNode *code) {
 						logprintf(LOG_ERR, "relay: invalid gpio range");
 						return -1;
 					} else {
-						pinMode(gpio, PINMODE_INPUT);
+						pinMode(gpio, INPUT);
 						state1 = digitalRead(gpio);
 						if(strcmp(def, "on") == 0) {
 							state1 ^= 1;

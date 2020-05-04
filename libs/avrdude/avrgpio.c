@@ -25,7 +25,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
-#include <wiringx.h>
+#include <wiringPi.h>
 #include <assert.h>
 
 #include "avrdude.h"
@@ -56,7 +56,7 @@
 static int gpio_fds[N_GPIO];
 
 static int gpio_setpin(PROGRAMMER * pgm, int pin, int value) {
-	if(gpio_fds[pin] != PINMODE_OUTPUT) {
+	if(gpio_fds[pin] != OUTPUT) {
 		return -1;
 	}
 
@@ -77,7 +77,7 @@ static int gpio_setpin(PROGRAMMER * pgm, int pin, int value) {
 }
 
 static int gpio_getpin(PROGRAMMER * pgm, int pin) {
-	if(gpio_fds[pin] == PINMODE_INPUT) {
+	if(gpio_fds[pin] == INPUT) {
 		return digitalRead(pin);
 	} else {
 		return -1;
@@ -86,7 +86,7 @@ static int gpio_getpin(PROGRAMMER * pgm, int pin) {
 
 static int gpio_highpulsepin(PROGRAMMER * pgm, int pin) {
 
-	if(gpio_fds[pin] == PINMODE_OUTPUT) {
+	if(gpio_fds[pin] == OUTPUT) {
 		digitalWrite(pin, HIGH);
 		digitalWrite(pin, LOW);
 		return 0;
@@ -123,11 +123,11 @@ static int gpio_open(PROGRAMMER *pgm, char *port) {
 	for(i=0;i<N_PINS;i++) {
 		if(pgm->pinno[i] != 0) {
 			if(i == PIN_AVR_MISO) {
-				gpio_fds[pgm->pinno[i]] = PINMODE_INPUT;
-				pinMode(pgm->pinno[i], PINMODE_INPUT);
+				gpio_fds[pgm->pinno[i]] = INPUT;
+				pinMode(pgm->pinno[i], INPUT);
 			} else {
-				gpio_fds[pgm->pinno[i]] = PINMODE_OUTPUT;;
-				pinMode(pgm->pinno[i], PINMODE_OUTPUT);
+				gpio_fds[pgm->pinno[i]] = OUTPUT;;
+				pinMode(pgm->pinno[i], OUTPUT);
 			}
 		}
 	}
@@ -136,7 +136,7 @@ static int gpio_open(PROGRAMMER *pgm, char *port) {
 }
 
 static void gpio_close(PROGRAMMER *pgm) {
-	if(gpio_fds[pgm->pinno[PIN_AVR_RESET]] == PINMODE_OUTPUT) {
+	if(gpio_fds[pgm->pinno[PIN_AVR_RESET]] == OUTPUT) {
 		digitalWrite(pgm->pinno[PIN_AVR_RESET], HIGH);
 		// digitalWrite(pgm->pinno[PIN_AVR_RESET], LOW);
 	}
@@ -164,7 +164,7 @@ void gpio_initpgm(PROGRAMMER *pgm)
 		logprintf(LOG_ERR, "no gpio-platform configured");
 		exit(EXIT_FAILURE);
 	}
-	if(wiringXSetup(platform, logprintf1) < 0) {
+	if(wiringPiSetup() < 0) {
 		FREE(platform);
 		exit(EXIT_FAILURE);
 	}

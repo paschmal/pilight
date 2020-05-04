@@ -23,7 +23,7 @@
 #include <unistd.h>
 #include <math.h>
 #ifndef _WIN32
-#include <wiringx.h>
+#include <wiringPi.h>
 #endif
 #include <assert.h>
 
@@ -77,7 +77,7 @@ static void *thread(void *param) {
 		jchild = json_first_child(jid);
 		if(json_find_number(jchild, "gpio", &itmp) == 0) {
 			id = (int)round(itmp);
-			pinMode(id, PINMODE_INPUT);
+			pinMode(id, INPUT);
 			state = digitalRead(id);
 		}
 	}
@@ -114,7 +114,7 @@ static struct threadqueue_t *initDev(JsonNode *jdevice) {
 		logprintf(LOG_ERR, "no gpio-platform configured");
 		return NULL;
 	}
-	if(wiringXSetup(platform, logprintf1) < 0) {
+	if(wiringPiSetup() < 0) {
 		FREE(platform);
 		return NULL;
 	}
@@ -147,7 +147,7 @@ static int checkValues(struct JsonNode *jvalues) {
 		logprintf(LOG_ERR, "no gpio-platform configured");
 		return -1;
 	}
-	if(wiringXSetup(platform, logprintf1) < 0) {
+	if(wiringPiSetup() < 0) {
 		FREE(platform);
 		return -1;
 	}
@@ -163,9 +163,10 @@ static int checkValues(struct JsonNode *jvalues) {
 			jchild1 = json_first_child(jchild);
 			while(jchild1) {
 				if(strcmp(jchild1->key, "gpio") == 0) {
-					if(wiringXValidGPIO((int)round(jchild1->number_)) != 0) {
-						return -1;
-					}
+					return -1;
+					// if(wiringXValidGPIO((int)round(jchild1->number_)) != 0) {
+					// 	return -1;
+					// }
 				}
 				jchild1 = jchild1->next;
 			}

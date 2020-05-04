@@ -25,7 +25,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #ifndef _WIN32
-#include <wiringx.h>
+#include <wiringPi.h>
 #endif
 
 #include "irq.h"

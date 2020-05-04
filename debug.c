@@ -19,7 +19,7 @@
 #include <assert.h>
 
 #ifndef _WIN32
-#include <wiringx.h>
+#include <wiringPi.h>
 #endif
 
 #include "libs/pilight/core/threads.h"
@@ -84,7 +84,7 @@ int main_gc(void) {
 
 	plua_gc();
 #ifndef _WIN32
-	wiringXGC();
+	//wiringXGC();
 #endif
 	dso_gc();
 	log_gc();

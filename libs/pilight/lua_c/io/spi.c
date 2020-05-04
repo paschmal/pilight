@@ -29,7 +29,7 @@
 	#include <unistd.h>
 #endif
 
-#include <wiringx.h>
+#include <wiringPi.h>
 
 #include "../../core/log.h"
 #include "../../config/config.h"
@@ -173,7 +173,7 @@ static int plua_io_spi_rw(struct lua_State *L) {
 
 	uint8_t *rxbuf = (void *)tmp;
 
-	wiringXSPIDataRW(spi->channel, (unsigned char *)tmp, nr);
+	digitalWrite(spi->channel, (unsigned char *)tmp);
 
 	if((rxbuf[0] & 0x80) == 0) { // read
 		lua_pushnumber(L, tmp[1]);
@@ -268,7 +268,7 @@ int plua_io_spi(struct lua_State *L) {
 	pthread_mutex_unlock(&lock);
 #endif
 
-	if(match == 1 && wiringXSPIGetFd(channel) == 0) {
+	if(match == 1) {
 		logprintf(LOG_ERR, "known SPI channel (%d) is unknown to wiringX", channel);
 		lua_pushnil(L);
 
@@ -278,7 +278,7 @@ int plua_io_spi(struct lua_State *L) {
 	}
 
 	if(match == 0) {
-		if(wiringXSPISetup(channel, speed) == -1) {
+		if(wiringPiSetup() == -1) {
 			lua_pushnil(L);
 
 			assert(plua_check_stack(L, 1, PLUA_TNIL) == 0);
@@ -301,7 +301,7 @@ int plua_io_spi(struct lua_State *L) {
 
 			lua_spi->channel = channel;
 			lua_spi->speed = speed;
-			lua_spi->fd = wiringXSPIGetFd(channel);
+			// lua_spi->fd = wiringXSPIGetFd(channel);
 
 			lua_spi->module = state->module;
 			lua_spi->L = L;

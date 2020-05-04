@@ -17,7 +17,7 @@
 #include <math.h>
 #include <string.h>
 #ifndef _WIN32
-#include <wiringx.h>
+#include <wiringPi.h>
 #endif
 #include <assert.h>
 
@@ -189,7 +189,7 @@ close:
 	events_gc();
 #endif
 #ifndef _WIN32
-	wiringXGC();
+	//wiringXGC();
 #endif
 	log_gc();
 	threads_gc();
